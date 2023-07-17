@@ -23,31 +23,21 @@ class MainActivity : AppCompatActivity() {
         initializeButtons()
 
         if (isHaveBiometric) {
-            initializeBiometric()
+            initializeButtonForBiometric()
         }
     }
     private fun checkBiometricInDevice() {
         val biometricManager = BiometricManager.from(this)
-        val buttonOpenCamera = findViewById<Button>(R.id.buttonOpenCamera)
+        val buttonOpenBiometric = findViewById<Button>(R.id.buttonOpenBiometric)
 
         when (biometricManager.canAuthenticate()) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
-                buttonOpenCamera.visibility = View.VISIBLE
+                buttonOpenBiometric.visibility = View.VISIBLE
                 isHaveBiometric = true
             }
 
-            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
-                buttonOpenCamera.visibility = View.GONE
-                isHaveBiometric = false
-            }
-
-            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
-                buttonOpenCamera.visibility = View.GONE
-                isHaveBiometric = false
-            }
-
-            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                buttonOpenCamera.visibility = View.GONE
+            else -> {
+                buttonOpenBiometric.visibility = View.GONE
                 isHaveBiometric = false
             }
         }
@@ -83,8 +73,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initializeBiometric() {
-        val buttonOpenCamera = findViewById<Button>(R.id.buttonOpenCamera)
+    private fun initializeButtonForBiometric() {
+        val buttonBiometric = findViewById<Button>(R.id.buttonOpenBiometric)
 
         biometricPrompt = BiometricPrompt(this@MainActivity, ContextCompat.getMainExecutor(this), object:androidx.biometric.BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
@@ -102,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         }
         )
 
-        buttonOpenCamera.setOnClickListener {
+        buttonBiometric.setOnClickListener {
             biometricPrompt.authenticate(createBiometricPromptInfo())
         }
     }
