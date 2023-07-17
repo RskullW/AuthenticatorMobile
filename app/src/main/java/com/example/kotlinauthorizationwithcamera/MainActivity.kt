@@ -13,7 +13,7 @@ import androidx.biometric.BiometricPrompt.PromptInfo
 import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
-    private var isHaveBiometricFace: Boolean = true
+    private var isHaveBiometric: Boolean = true
     private lateinit var biometricPrompt: BiometricPrompt
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         checkBiometricInDevice()
         initializeButtons()
 
-        if (isHaveBiometricFace) {
+        if (isHaveBiometric) {
             initializeBiometric()
         }
     }
@@ -32,27 +32,23 @@ class MainActivity : AppCompatActivity() {
 
         when (biometricManager.canAuthenticate()) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
-                // Биометрическая аутентификация доступна на устройстве
                 buttonOpenCamera.visibility = View.VISIBLE
-                isHaveBiometricFace = true
+                isHaveBiometric = true
             }
 
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
-                // На устройстве отсутствует аппаратная поддержка биометрической аутентификации
                 buttonOpenCamera.visibility = View.GONE
-                isHaveBiometricFace = false
+                isHaveBiometric = false
             }
 
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
-                // Аппаратная поддержка биометрической аутентификации недоступна в данный момент
                 buttonOpenCamera.visibility = View.GONE
-                isHaveBiometricFace = false
+                isHaveBiometric = false
             }
 
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                // На устройстве не зарегистрировано ни одного биометрического шаблона
                 buttonOpenCamera.visibility = View.GONE
-                isHaveBiometricFace = false
+                isHaveBiometric = false
             }
         }
     }
