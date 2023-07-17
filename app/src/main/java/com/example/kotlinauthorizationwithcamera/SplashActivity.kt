@@ -48,5 +48,4 @@ class SplashActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         handler.postDelayed(runnable, (duration / (progressBar.max / increment)).toLong())
     }
-
 }
