@@ -3,10 +3,9 @@ package com.example.kotlinauthorizationwithcamera
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
-class RegistrationActivity : AppCompatActivity() {
+class SecondActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_registration)
+        setContentView(R.layout.activity_second)
     }
-
 }
