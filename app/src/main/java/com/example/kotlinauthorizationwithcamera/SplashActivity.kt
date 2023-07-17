@@ -12,12 +12,10 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        SetActivity(MainActivity::class.java)
+        LoadActivity()
     }
 
-    private fun <T> SetActivity(activity: Class<T>) {
-        val intent = Intent(this, activity)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    private fun LoadActivity() {
 
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
 
@@ -36,10 +34,20 @@ class SplashActivity : AppCompatActivity() {
                 progressBar.progress = progress
 
                 if (progress >= progressBar.max) {
+
+                    val intent = if (DataSettings.isHaveData) {
+                        Intent(this@SplashActivity, MainActivity::class.java)
+                    } else {
+                        Intent(this@SplashActivity, RegistrationActivity::class.java)
+                    }
+
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
                     handler.removeCallbacks(this)
                     startActivity(intent)
                     finish()
                 } else {
+                    DataSettings.LoadData(this@SplashActivity)
                     handler.postDelayed(this, (duration / (progressBar.max / increment)).toLong())
                 }
             }

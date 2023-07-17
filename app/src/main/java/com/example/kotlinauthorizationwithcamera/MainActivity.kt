@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
@@ -25,7 +26,6 @@ class MainActivity : AppCompatActivity() {
             initializeBiometric()
         }
     }
-
     private fun checkBiometricInDevice() {
         val biometricManager = BiometricManager.from(this)
         val buttonOpenCamera = findViewById<Button>(R.id.buttonOpenCamera)
@@ -61,9 +61,30 @@ class MainActivity : AppCompatActivity() {
         val signInButton = findViewById<Button>(R.id.SignIn)
 
         signInButton.setOnClickListener {
-            SetActivity(RegistrationActivity::class.java)
+            SetActivity(RegistrationActivity::class.java, false)
         }
 
+        logInButton.setOnClickListener {
+            checkPassword()
+        }
+    }
+
+    private fun checkPassword() {
+        val editText = findViewById<EditText>(R.id.editTextPassword)
+
+        if (DataSettings.isLoaded) {
+            if (editText.text.toString() == DataSettings.password) {
+                Toast.makeText(this@MainActivity, "Вы успешно вошли в аккаунт", Toast.LENGTH_LONG).show()
+                SetActivity(SecondActivity::class.java, true)
+            } else {
+                Toast.makeText(this@MainActivity, "Неверный пароль", Toast.LENGTH_LONG).show()
+                editText.text.clear()
+            }
+        }
+
+        else {
+            Toast.makeText(this@MainActivity, "Неверный пароль", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun initializeBiometric() {
@@ -72,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         biometricPrompt = BiometricPrompt(this@MainActivity, ContextCompat.getMainExecutor(this), object:androidx.biometric.BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 val cryptoObject = result.cryptoObject
-                SetActivity(SecondActivity::class.java)
+                SetActivity(SecondActivity::class.java, true)
             }
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -89,10 +110,15 @@ class MainActivity : AppCompatActivity() {
             biometricPrompt.authenticate(createBiometricPromptInfo())
         }
     }
-    private fun <T> SetActivity(activity: Class<T>) {
-        startActivity(Intent(this, activity))
-    }
+    private fun <T> SetActivity(activity: Class<T>, isClearTask: Boolean) {
+        val intent = Intent(this, activity)
 
+        if (isClearTask) {
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        startActivity(intent)
+    }
     private fun createBiometricPromptInfo(): PromptInfo {
         return PromptInfo.Builder()
             .setTitle("Authorization")
